@@ -1,3 +1,5 @@
 sqlitedict
 discord
 python-dotenv
+fuzzywuzzy
+python-Levenshtein
