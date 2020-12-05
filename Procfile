@@ -1,1 +1,1 @@
-worker: python oreo.py
+worker: python3 oreo.py
