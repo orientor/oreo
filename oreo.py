@@ -2,6 +2,7 @@ import os
 import discord
 from dotenv import load_dotenv
 from sqlitedict import SqliteDict
+from fuzzywuzzy import process
 
 mydict = SqliteDict('./my_db.sqlite', autocommit=True)
 
@@ -23,13 +24,16 @@ async def on_message(message):
             return
         xo = message.content[7:]
         x=''
+        channelList = []
+        channelmention = {}
         for channel in  message.guild.channels:
             if type(channel) != discord.channel.TextChannel:
                 continue
-            if (xo in channel.name) or (channel.name in xo):
-                x+=f"{cnt}. {channel.name} {channel.mention}"
-                x+="\n"
-                cnt+=1
+            channelList.append(channel.name)
+            channelmention[channel.name] = channel.mention
+        for channel,weight in process.extract(xo, channelList):
+            x += (f"{cnt} {channel}  {str(weight)} {channelmention[channel]}\n")
+            cnt+=1
         if len(x)>0:
             sent=await message.channel.send(x)
             await sent.add_reaction('\N{THUMBS UP SIGN}')
