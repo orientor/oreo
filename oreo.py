@@ -35,7 +35,7 @@ async def on_message(message):
             await sent.add_reaction('\N{THUMBS UP SIGN}')
             mydict[sent.id]=xo
         else:
-            sent=await message.channel.send("No results. Hit like to create channel.")
+            sent=await message.channel.send(f"No results. Hit like to create channel '{message.channel.name}'.")
             await sent.add_reaction('\N{THUMBS UP SIGN}')
             mydict[sent.id]=xo
 
