@@ -25,6 +25,7 @@ async def on_message(message):
         if len(message.content) < 8:
             return
         xo = message.content[7:]
+        author_id = message.author.id
         x = ''
         channelList = []
         channelmention = {}
@@ -40,11 +41,11 @@ async def on_message(message):
         if len(x) > 0:
             sent = await message.channel.send(x)
             await sent.add_reaction('\N{THUMBS UP SIGN}')
-            mydict[sent.id] = xo
+            mydict[sent.id] = tuple([xo, author_id])
         else:
             sent = await message.channel.send(f"No results. Hit like to create channel '{xo}'.")
             await sent.add_reaction('\N{THUMBS UP SIGN}')
-            mydict[sent.id] = xo
+            mydict[sent.id] = tuple([xo, author_id])
 
 
 @client.event
@@ -53,8 +54,8 @@ async def on_reaction_add(reaction, user):
         return
     if reaction.message.id not in mydict:
         return
-    if user.id != reaction.message.author.id:
+    if user.id != mydict[reaction.message.id][1]:
         return
-    await reaction.message.guild.create_text_channel(mydict[reaction.message.id])
+    await reaction.message.guild.create_text_channel(mydict[reaction.message.id][0])
 
 client.run(TOKEN)
