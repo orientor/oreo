@@ -41,11 +41,11 @@ async def on_message(message):
         if len(x) > 0:
             sent = await message.channel.send(x)
             await sent.add_reaction('\N{THUMBS UP SIGN}')
-            mydict[sent.id] = tuple([xo, author_id])
+            mydict[sent.id] = tuple([xo, author_id, False])
         else:
             sent = await message.channel.send(f"No results. Hit like to create channel '{xo}'.")
             await sent.add_reaction('\N{THUMBS UP SIGN}')
-            mydict[sent.id] = tuple([xo, author_id])
+            mydict[sent.id] = tuple([xo, author_id, False])
 
 
 @client.event
@@ -56,6 +56,9 @@ async def on_reaction_add(reaction, user):
         return
     if user.id != mydict[reaction.message.id][1]:
         return
+    if mydict[reaction.message.id][2]:
+        return
+    mydict[reaction.message.id][2] = True
     await reaction.message.guild.create_text_channel(mydict[reaction.message.id][0])
 
 client.run(TOKEN)
