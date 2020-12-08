@@ -35,9 +35,10 @@ async def on_message(message):
             channelList.append(channel.name)
             channelmention[channel.name] = channel.mention
         for channel, weight in process.extract(xo, channelList):
-            x += (
-                f"{cnt} {channel}  {str(weight)} {channelmention[channel]}\n")
-            cnt += 1
+            if weight > 0:
+                x += (
+                    f"{cnt} {channel}  {str(weight)} {channelmention[channel]}\n")
+                cnt += 1
         if len(x) > 0:
             sent = await message.channel.send(x)
             await sent.add_reaction('\N{THUMBS UP SIGN}')
