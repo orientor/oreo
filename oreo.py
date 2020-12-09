@@ -26,7 +26,7 @@ async def on_message(message):
             return
         xo = message.content[7:]
         author_id = message.author.id
-        x = ''
+        x = '**Channel List**\n'
         channelList = []
         channelmention = {}
         for channel in message.guild.channels:
@@ -37,16 +37,17 @@ async def on_message(message):
         for channel, weight in process.extract(xo, channelList):
             if weight > 0:
                 x += (
-                    f"{cnt} {channel}  {str(weight)} {channelmention[channel]}\n")
+                    f"> {channelmention[channel]}\n")
                 cnt += 1
         if len(x) > 0:
+            x += f"**Hit like to create channel '*{xo}*'**"
             sent = await message.channel.send(x)
             await sent.add_reaction('\N{THUMBS UP SIGN}')
-            mydict[sent.id] = tuple([xo, author_id, False])
+            mydict[sent.id] = list([xo, author_id, False])
         else:
-            sent = await message.channel.send(f"No results. Hit like to create channel '{xo}'.")
+            sent = await message.channel.send(f"**No results. Hit like to create channel '*{xo}*'.**")
             await sent.add_reaction('\N{THUMBS UP SIGN}')
-            mydict[sent.id] = tuple([xo, author_id, False])
+            mydict[sent.id] = list([xo, author_id, False])
 
 
 @client.event
