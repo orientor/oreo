@@ -21,34 +21,39 @@ async def on_ready():
 @client.event
 async def on_message(message):
     cnt = 1
-    if message.content.startswith("!coreo"):
+    if message.content.startswith("!coreo "):
         if len(message.content) < 8:
             return
         xo = message.content[7:]
-        author_id = message.author.id
-        x = '**Channel List**\n'
-        channelList = []
-        channelmention = {}
-        for channel in message.guild.channels:
-            if type(channel) != discord.channel.TextChannel:
-                continue
-            channelList.append(channel.name)
-            channelmention[channel.name] = channel.mention
-        for channel, weight in process.extract(xo, channelList):
-            if weight > 0:
-                x += (
-                    f"> {channelmention[channel]}\n")
-                cnt += 1
-        if len(x) > 0:
-            x += f"**Hit like to create channel '*{xo}*'**"
-            sent = await message.channel.send(x)
-            await sent.add_reaction('\N{THUMBS UP SIGN}')
-            mydict[sent.id] = list([xo, author_id, False])
-        else:
-            sent = await message.channel.send(f"**No results. Hit like to create channel '*{xo}*'.**")
-            await sent.add_reaction('\N{THUMBS UP SIGN}')
-            mydict[sent.id] = list([xo, author_id, False])
-
+    elif message.content.startswith("!coreo"):
+        if len(message.content) < 7:
+            return
+        xo = message.content[6:]
+    else:
+        return
+    author_id = message.author.id
+    x = '**Channel List**\n'
+    channelList = []
+    channelmention = {}
+    for channel in message.guild.channels:
+        if type(channel) != discord.channel.TextChannel:
+            continue
+        channelList.append(channel.name)
+        channelmention[channel.name] = channel.mention
+    for channel, weight in process.extract(xo, channelList):
+        if weight > 0:
+            x += (
+                f"> {channelmention[channel]}\n")
+            cnt += 1
+    if len(x) > 0:
+        x += f"**Hit like to create channel '*{xo}*'**"
+        sent = await message.channel.send(x)
+        await sent.add_reaction('\N{THUMBS UP SIGN}')
+        mydict[sent.id] = list([xo, author_id, False])
+    else:
+        sent = await message.channel.send(f"**No results. Hit like to create channel '*{xo}*'.**")
+        await sent.add_reaction('\N{THUMBS UP SIGN}')
+        mydict[sent.id] = list([xo, author_id, False])
 
 @client.event
 async def on_reaction_add(reaction, user):
