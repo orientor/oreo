@@ -55,7 +55,6 @@ async def on_message(message):
         await sent.add_reaction('\N{THUMBS UP SIGN}')
         mydict[sent.id] = [xo, author_id, False]
 
-
 @client.event
 async def on_reaction_add(reaction, user):
     if user.bot:
