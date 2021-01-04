@@ -49,11 +49,12 @@ async def on_message(message):
         x += f"**Hit like to create channel '*{xo}*'**"
         sent = await message.channel.send(x)
         await sent.add_reaction('\N{THUMBS UP SIGN}')
-        mydict[sent.id] = [xo, author_id, False]
+        mydict[sent.id] = [xo, author_id, False, message.channel.category]
     else:
         sent = await message.channel.send(f"**No results. Hit like to create channel '*{xo}*'.**")
         await sent.add_reaction('\N{THUMBS UP SIGN}')
-        mydict[sent.id] = [xo, author_id, False]
+        mydict[sent.id] = [xo, author_id, False, message.channel.category]
+
 
 @client.event
 async def on_reaction_add(reaction, user):
@@ -66,6 +67,9 @@ async def on_reaction_add(reaction, user):
     if mydict[reaction.message.id][2] is True:
         return
     mydict[reaction.message.id][2] = True
-    await reaction.message.guild.create_text_channel(mydict[reaction.message.id][0])
+    if mydict[reaction.message.id][3] is None:
+        await reaction.message.guild.create_text_channel(mydict[reaction.message.id][0])
+    else:
+        await reaction.message.guild.create_text_channel(mydict[reaction.message.id][0], category=mydict[reaction.message.id][3])
 
 client.run(TOKEN)
