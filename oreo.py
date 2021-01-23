@@ -49,11 +49,20 @@ async def on_message(message):
         x += f"**Hit like to create channel '*{xo}*'**"
         sent = await message.channel.send(x)
         await sent.add_reaction('\N{THUMBS UP SIGN}')
-        mydict[sent.id] = [xo, author_id, False]
+        if message.channel.category_id is None:
+            mydict[sent.id] = [xo, author_id, False, None]
+        else:
+            mydict[sent.id] = [xo, author_id,
+                               False, message.channel.category_id]
     else:
         sent = await message.channel.send(f"**No results. Hit like to create channel '*{xo}*'.**")
         await sent.add_reaction('\N{THUMBS UP SIGN}')
-        mydict[sent.id] = [xo, author_id, False]
+        if message.channel.category_id is None:
+            mydict[sent.id] = [xo, author_id, False, None]
+        else:
+            mydict[sent.id] = [xo, author_id,
+                               False, message.channel.category_id]
+
 
 @client.event
 async def on_reaction_add(reaction, user):
@@ -65,7 +74,19 @@ async def on_reaction_add(reaction, user):
         return
     if mydict[reaction.message.id][2] is True:
         return
-    mydict[reaction.message.id][2] = True
-    await reaction.message.guild.create_text_channel(mydict[reaction.message.id][0])
+    temp_list = mydict[reaction.message.id].copy()
+    temp_list[2] = True
+    mydict[reaction.message.id] = temp_list
+    if mydict[reaction.message.id][3] is None:
+        await reaction.message.guild.create_text_channel(mydict[reaction.message.id][0])
+    else:
+        category_list = reaction.message.guild.by_category()
+        category = None
+        for entry in category_list:
+            if entry[0] is None:
+                continue
+            if entry[0].id == mydict[reaction.message.id][3]:
+                category = entry[0]
+        await reaction.message.guild.create_text_channel(mydict[reaction.message.id][0], category=category)
 
 client.run(TOKEN)
